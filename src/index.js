@@ -49,7 +49,7 @@ function onLocationFound(e) {
 }
 
 
-map.on('locationfound', onLocationFound);
+// map.on('locationfound', onLocationFound);
 
 function onLocationError(e) {
   alert(e.message);
