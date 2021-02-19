@@ -1,0 +1,7 @@
+/* @import '~leaflet/dist/leaflet.css'; */
+
+.hello {
+  color: red;
+}
+
+#mapid { height: 380px; }
