@@ -1,13 +1,16 @@
 import L from 'leaflet'
 import Locate from 'leaflet.locatecontrol'
+import _ from 'lodash'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css'
+import "leaflet/dist/images/marker-icon-2x.png"
 
 import './style.css'
 
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
   iconUrl: require("leaflet/dist/images/marker-icon.png"),
   shadowUrl: require("leaflet/dist/images/marker-shadow.png")
 });
@@ -17,14 +20,14 @@ console.log('working ..........: ', L)
 
 // var map = L.map('mapid').setView([51.505, -0.09], 13);
 var map = L.map('mapid', {
-  center: [-32.987602, 151.708308],
-  zoom: 15,
+  // center: [-32.987602, 151.708308],
+  zoom: 16,
 });
 
-// map.locate({
-//   setView: true, //zooming the map view to the detected location
-//   maxZoom: 16
-// });
+map.locate({
+  setView: true, //zooming the map view to the detected location
+  maxZoom: 16
+});
 
 // show the scale bar on the lower left corner
 L.control.scale({ imperial: false }).addTo(map);
@@ -39,7 +42,7 @@ function onLocationFound(e) {
 
   marker.on('dragend', function (e) {
     console.log(marker.getLatLng())
-    // updateLatLng(marker.getLatLng().lat, marker.getLatLng().lng);
+    // updateLatLng(marker.getLatLng().lat, marker.getLatLng().lng)
   })
 
   marker.on('dragstart', function (e) {
@@ -48,8 +51,8 @@ function onLocationFound(e) {
   console.log(e.latlng)
 }
 
-
-// map.on('locationfound', onLocationFound);
+map.on('locationfound', _.once(onLocationFound))
+// map.on('locationfound', onLocationFound)
 
 function onLocationError(e) {
   alert(e.message);
@@ -61,18 +64,18 @@ map.on('locationerror', onLocationError);
 // var marker = L.marker([-32.987602, 151.708308]).addTo(map);
 
 
-// location
+// locate control ---------------------
 
 const lc = new Locate({
   locateOptions: {
-    enableHighAccuracy: true,
-    setView: true,
+    // enableHighAccuracy: true,
+    // setView: true, //zooming the map view to the detected location
   },
   keepCurrentZoomLevel: true,
   showCompass: true,
 }).addTo(map)
 
-console.log(lc)
+// console.log(lc)
 // L.control.locate({
 //   locateOptions: {
 //     enableHighAccuracy: true
