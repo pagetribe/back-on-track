@@ -32,11 +32,34 @@ map.locate({
 // show the scale bar on the lower left corner
 L.control.scale({ imperial: false }).addTo(map);
 
+
 function onLocationFound(e) {
   var radius = e.accuracy;
 
+  function saveStartLatLng() {
+    console.log('.................')
+  }
+
+  // var saveStartLatLng = function () {
+  //   console.log('.....');
+  // }
+
+
   let marker = L.marker(e.latlng, { draggable: true }).addTo(map)
-    .bindPopup("You are within " + radius + " meters from this point").openPopup();
+    .bindPopup("<button id='start-button'>Click Here</button > ").openPopup();
+
+  var buttonSubmit = L.DomUtil.get('start-button');
+  L.DomEvent.addListener(buttonSubmit, 'click', function (e) {
+    saveStartLatLng()
+  });
+
+
+  // .bindPopup(<button onclick="window.location.href='https://w3docs.com';">Click Here</button>).openPopup();
+  // .bindPopup("You are within " + radius + " meters from this point" + "<button onclick=" + saveStartLatLng() + ">save as start</button>").openPopup();
+  // var popup = L.popup()
+  //   .setLatLng(e.latlng)
+  //   .setContent("<button id='start-button'>Click Here</button > ")
+  //   .openOn(map);
 
   let circle = L.circle(e.latlng, radius).addTo(map);
 
