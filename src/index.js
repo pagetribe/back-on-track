@@ -15,8 +15,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png")
 });
 
-console.log('working ..........: ', L)
-
+// console.log('working ..........: ', L)
 
 // var map = L.map('mapid').setView([51.505, -0.09], 13);
 var map = L.map('mapid', {
@@ -25,34 +24,46 @@ var map = L.map('mapid', {
 });
 
 map.locate({
-  setView: true, //zooming the map view to the detected location
-  maxZoom: 16
+  setView: 'true', //zooming the map view to the detected location
+  maxZoom: 16,
 });
 
 // show the scale bar on the lower left corner
 L.control.scale({ imperial: false }).addTo(map);
 
 
+
+
+let startMarker;
+
+function saveStartLatLng() {
+  localStorage.setItem('startLatLng', startMarker.getLatLng())
+  console.log('................. ', startMarker.getLatLng())
+}
+
+map.on('popupopen', function () {
+  L.DomEvent.addListener(
+    // document.getElementById('start-button'),
+    L.DomUtil.get('start-button'),
+    'click',
+    function (e) {
+      saveStartLatLng()
+    });
+});
+
 function onLocationFound(e) {
   var radius = e.accuracy;
 
-  function saveStartLatLng() {
-    console.log('.................')
-  }
+  startMarker = L.marker(e.latlng, { draggable: true })
+    .addTo(map)
+    .bindPopup("Save as starting point. <br> <button id='start-button'>save</button > ")
+    .openPopup();
 
-  // var saveStartLatLng = function () {
-  //   console.log('.....');
-  // }
+  // var buttonSubmit = L.DomUtil.get('start-button');
 
-
-  let marker = L.marker(e.latlng, { draggable: true }).addTo(map)
-    .bindPopup("<button id='start-button'>Click Here</button > ").openPopup();
-
-  var buttonSubmit = L.DomUtil.get('start-button');
-  L.DomEvent.addListener(buttonSubmit, 'click', function (e) {
-    saveStartLatLng()
-  });
-
+  // L.DomEvent.addListener(buttonSubmit, 'click', function (e) {
+  //   saveStartLatLng()
+  // });
 
   // .bindPopup(<button onclick="window.location.href='https://w3docs.com';">Click Here</button>).openPopup();
   // .bindPopup("You are within " + radius + " meters from this point" + "<button onclick=" + saveStartLatLng() + ">save as start</button>").openPopup();
@@ -63,12 +74,11 @@ function onLocationFound(e) {
 
   let circle = L.circle(e.latlng, radius).addTo(map);
 
-  marker.on('dragend', function (e) {
-    console.log(marker.getLatLng())
-    // updateLatLng(marker.getLatLng().lat, marker.getLatLng().lng)
+  startMarker.on('dragend', function (e) {
+    startMarker.openPopup()
   })
 
-  marker.on('dragstart', function (e) {
+  startMarker.on('dragstart', function (e) {
     map.removeLayer(circle)
   })
   console.log(e.latlng)
@@ -78,13 +88,11 @@ map.on('locationfound', _.once(onLocationFound))
 // map.on('locationfound', onLocationFound)
 
 function onLocationError(e) {
-  alert(e.message);
+  // alert(e.message);
 }
 
 map.on('locationerror', onLocationError);
 
-
-// var marker = L.marker([-32.987602, 151.708308]).addTo(map);
 
 
 // locate control ---------------------
@@ -94,7 +102,9 @@ const lc = new Locate({
     // enableHighAccuracy: true,
     // setView: true, //zooming the map view to the detected location
   },
+  // setView: true,
   keepCurrentZoomLevel: true,
+  initialZoomLevel: 15,
   showCompass: true,
 }).addTo(map)
 
